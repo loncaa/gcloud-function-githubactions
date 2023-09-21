@@ -36,5 +36,6 @@ jobs:
         project: ${{ secrets.GCP_PROJECT }}
 
     # Example of using the output
-    - id: 'Output function url'
+    - name: 'Output function url'
+      id: 'output-url'
       run: 'curl "${{ steps.deploy-function.outputs.url }}"'
