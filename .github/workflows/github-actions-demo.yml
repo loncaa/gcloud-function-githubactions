@@ -17,7 +17,9 @@ jobs:
 
     - id: 'tsc-build'
       name: 'Build Typescript code'
-      run: npm run build
+      run: | 
+        npm i
+        npm run build
 
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
