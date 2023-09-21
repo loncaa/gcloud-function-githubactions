@@ -14,8 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - id: 'tsc-build'
-      name: 'Setup code env'
+    - id: 'project-dependencies-setup'
+      name: 'Setup project dependencies'
       run: | 
         npm i
         npm run build
@@ -26,16 +26,17 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-    - name: Deploy a Cloud Function
-      id: deploy-function
-      uses: google-github-actions/deploy-cloud-functions@v0.1.0
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
       with:
-        name: my-function
-        entry_point: myFnc
-        runtime: nodejs16
-        project: ${{ secrets.GCP_PROJECT }}
+        version: '>= 363.0.0'
 
     # Example of using the output
-    - name: 'Output function url'
-      id: 'output-url'
-      run: 'curl "${{ steps.deploy-function.outputs.url }}"'
+    - name: 'Use Google Cloud SK'
+      id: 'gcloud-run'
+      run: 'gcloud functions deploy my-function \
+        --entry-point myFnc \
+        --runtime nodejs16 \
+        --project $GCP_PROJECT \
+        --trigger-http \
+        --allow-unauthenticated'
