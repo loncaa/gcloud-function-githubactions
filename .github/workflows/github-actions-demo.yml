@@ -1,18 +1,32 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: GitHub Actions Gcloud Function Deploy
+run-name: ${{ github.actor }} is deploying Gcloud Function 🚀
+on:
+  push:
+    branches:
+      - main
 jobs:
-  Explore-GitHub-Actions:
+  job_id:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+    - uses: actions/checkout@v3
+
+    - id: 'tsc-build'
+      name: 'Build Typescript code'
+      run: npm run build
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+    - name: Deploy a Cloud Function
+      id: deploy-function
+      uses: google-github-actions/deploy-cloud-functions@v0.1.0
+      with:
+        name: myFnc
+        runtime: nodejs16
+        project: ${{ secrets.GCP_PROJECT }}
