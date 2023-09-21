@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is deploying Gcloud Function 🚀
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   job_id:
     runs-on: ubuntu-latest
