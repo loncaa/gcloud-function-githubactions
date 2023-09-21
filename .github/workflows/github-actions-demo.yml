@@ -34,9 +34,10 @@ jobs:
     # Example of using the output
     - name: 'Use Google Cloud SK'
       id: 'gcloud-run'
-      run: 'gcloud functions deploy my-function \
+      run: |
+        gcloud functions deploy my-function \
         --entry-point myFnc \
         --runtime nodejs16 \
         --project $GCP_PROJECT \
         --trigger-http \
-        --allow-unauthenticated'
+        --allow-unauthenticated
