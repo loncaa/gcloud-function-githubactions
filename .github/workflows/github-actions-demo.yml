@@ -32,7 +32,7 @@ jobs:
         version: '>= 363.0.0'
 
     # Example of using the output
-    - name: 'Use Google Cloud SK'
+    - name: 'Deploy Function using Cloud SDK'
       id: 'gcloud-run'
       run: |
         gcloud functions deploy my-function \
