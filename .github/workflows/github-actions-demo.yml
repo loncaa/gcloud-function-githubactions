@@ -3,7 +3,6 @@ run-name: ${{ github.actor }} is deploying Gcloud Function 🚀
 on:
   push:
     branches:
-      - main
       - master
 jobs:
   job_id:
@@ -21,6 +20,7 @@ jobs:
         npm i
         npm run build
 
+    #https://github.com/google-github-actions/auth
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
@@ -30,6 +30,11 @@ jobs:
       id: deploy-function
       uses: google-github-actions/deploy-cloud-functions@v0.1.0
       with:
-        name: myFnc
+        name: my-function
+        entry_point: myFnc
         runtime: nodejs16
         project: ${{ secrets.GCP_PROJECT }}
+
+    # Example of using the output
+    - id: 'Output function url'
+      run: 'curl "${{ steps.deploy-function.outputs.url }}"'
