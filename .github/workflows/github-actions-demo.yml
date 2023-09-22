@@ -1,3 +1,8 @@
+#Before executing this action execute these terminal commands
+#gcloud services enable cloudfunctions.googleapis.com --project="$GCP_PROJECT"
+#gcloud services enable cloudbuild.googleapis.com --project="$GCP_PROJECT"
+#gcloud services disable artifactregistry.googleapis.com --project="$PROJECT_ID"
+
 name: GitHub Actions Gcloud Function Deploy
 run-name: ${{ github.actor }} is deploying Gcloud Function 🚀
 on:
@@ -14,16 +19,31 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'Enable Initial Services'
-      id: 'init'
-      env:
-        INIT_FLAG: ${{ vars.INIT_FLAG }}
-      if: ${{ env.INIT_FLAG == '' }} 
-      run: echo "INIT_FLAG=1" >> $GITHUB_ENV
+    - id: 'project-dependencies-setup'
+      name: 'Setup project dependencies'
+      run: | 
+        npm i
+        npm run build
 
-    - name: 'INIT_FLAG echo'
-      id: 'init-echo'
-      env:
-        INIT_FLAG: ${{ vars.INIT_FLAG }}
-      run: echo $INIT_FLAG
+    #https://github.com/google-github-actions/auth
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        version: '>= 363.0.0'
+
+    # required: enable Cloud Build API 
+    # https://stackoverflow.com/questions/47511677/firebase-cloud-function-your-client-does-not-have-permission-to-get-url-200-fr
+    - name: 'Deploy Function using Cloud SDK'
+      id: 'gcloud-run'
+      run: |
+        gcloud functions deploy my-function \
+        --entry-point myFnc \
+        --runtime nodejs16 \
+        --project $GCP_PROJECT \
+        --trigger-http \
+        --allow-unauthenticated
