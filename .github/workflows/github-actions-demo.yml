@@ -31,7 +31,20 @@ jobs:
       with:
         version: '>= 363.0.0'
 
+    - name: 'Enable Initial Services'
+      id: 'init'
+      env:
+        GITHUB_SHA_SHORT: ${{ vars.GITHUB_SHA_SHORT }}
+      if: ${{ env.GITHUB_SHA_SHORT === '' }} 
+      run: |
+        gcloud services enable cloudfunctions.googleapis.com --project="$GCP_PROJECT"
+        gcloud services enable cloudbuild.googleapis.com --project="$GCP_PROJECT"
+        gcloud services disable artifactregistry.googleapis.com --project="$GCP_PROJECT"
+        echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+
     # Example of using the output
+    # required: enable Cloud Build API 
+    # https://stackoverflow.com/questions/47511677/firebase-cloud-function-your-client-does-not-have-permission-to-get-url-200-fr
     - name: 'Deploy Function using Cloud SDK'
       id: 'gcloud-run'
       run: |
