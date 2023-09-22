@@ -17,13 +17,13 @@ jobs:
     - name: 'Enable Initial Services'
       id: 'init'
       env:
-        GITHUB_SHA_SHORT: ${{ vars.GITHUB_SHA_SHORT }}
-      if: ${{ env.GITHUB_SHA_SHORT == '' }} 
-      run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+        INIT_FLAG: ${{ vars.INIT_FLAG }}
+      if: ${{ env.INIT_FLAG == '' }} 
+      run: echo "INIT_FLAG=1" >> $GITHUB_ENV
 
-    - name: 'GITHUB_SHA_SHORT echo'
+    - name: 'INIT_FLAG echo'
       id: 'init-echo'
       env:
-        GITHUB_SHA_SHORT: ${{ vars.GITHUB_SHA_SHORT }}
-      run: echo $GITHUB_SHA_SHORT
+        INIT_FLAG: ${{ vars.INIT_FLAG }}
+      run: echo $INIT_FLAG
 
