@@ -35,7 +35,7 @@ jobs:
       id: 'init'
       env:
         GITHUB_SHA_SHORT: ${{ vars.GITHUB_SHA_SHORT }}
-      if: ${{ env.GITHUB_SHA_SHORT === '' }} 
+      if: ${{ env.GITHUB_SHA_SHORT == '' }} 
       run: |
         gcloud services enable cloudfunctions.googleapis.com --project="$GCP_PROJECT"
         gcloud services enable cloudbuild.googleapis.com --project="$GCP_PROJECT"
